@@ -158,7 +158,7 @@
 
   <!-- GitHub Streak -->
   <img
-    src="https://streak-stats.demolab.com?user=Amzad-Hussain-786&theme=dark&hide_border=true" width="60%"
+    src="https://streak-stats.demolab.com?user=Amzad-Hussain-786&theme=dark&hide_border=true" width="70%"
     alt="Amzad Hussain's GitHub Streak"
   />
 
@@ -177,7 +177,7 @@
 <div align="center">
   <img
     src="https://raw.githubusercontent.com/Amzad-Hussain-786/Amzad-Hussain-786/main/stats/github-stats.svg"
-    width="100%"
+    width="80%"
     alt="Amzad Hussain GitHub Statistics"
   />
 </div>
