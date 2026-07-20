@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
 
   schedule:
+    # Runs every day at midnight UTC
     - cron: "0 0 * * *"
 
   push:
@@ -21,39 +22,41 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Generate GitHub Stats SVG
+      - name: Generate GitHub Stats
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+
           python3 <<'PY'
+
           import os
           import json
           import urllib.request
-          import urllib.parse
-          from datetime import datetime, timedelta
+          import datetime
+          from collections import Counter
 
           USERNAME = "Amzad-Hussain-786"
           TOKEN = os.environ["GITHUB_TOKEN"]
 
-          API_HEADERS = {
+          HEADERS = {
               "Authorization": f"Bearer {TOKEN}",
               "Accept": "application/vnd.github+json",
-              "X-GitHub-Api-Version": "2022-11-28",
-              "User-Agent": "github-stats-generator"
+              "User-Agent": "Amzad-GitHub-Stats"
           }
 
           def api_get(url):
+
               request = urllib.request.Request(
                   url,
-                  headers=API_HEADERS
+                  headers=HEADERS
               )
 
               with urllib.request.urlopen(request) as response:
                   return json.loads(response.read())
 
-          # ---------------------------------
-          # USER INFORMATION
-          # ---------------------------------
+          # --------------------------------
+          # USER DATA
+          # --------------------------------
 
           user = api_get(
               f"https://api.github.com/users/{USERNAME}"
@@ -62,13 +65,14 @@ jobs:
           followers = user.get("followers", 0)
           public_repos = user.get("public_repos", 0)
 
-          # ---------------------------------
-          # ALL PUBLIC REPOSITORIES
-          # ---------------------------------
+          # --------------------------------
+          # REPOSITORIES
+          # --------------------------------
 
           repositories = []
 
           for page in range(1, 10):
+
               url = (
                   f"https://api.github.com/users/{USERNAME}/repos"
                   f"?per_page=100&page={page}&type=owner"
@@ -84,9 +88,9 @@ jobs:
               if len(data) < 100:
                   break
 
-          # ---------------------------------
+          # --------------------------------
           # STARS AND FORKS
-          # ---------------------------------
+          # --------------------------------
 
           total_stars = sum(
               repo.get("stargazers_count", 0)
@@ -98,131 +102,211 @@ jobs:
               for repo in repositories
           )
 
-          # ---------------------------------
-          # MOST USED LANGUAGES
-          # ---------------------------------
+          # --------------------------------
+          # LANGUAGES
+          # --------------------------------
 
-          language_bytes = {}
+          languages = Counter()
 
           for repo in repositories:
 
               if repo.get("fork"):
                   continue
 
-              languages_url = repo.get("languages_url")
-
-              if not languages_url:
-                  continue
-
               try:
-                  languages = api_get(languages_url)
 
-                  for language, bytes_count in languages.items():
-                      language_bytes[language] = (
-                          language_bytes.get(language, 0)
-                          + bytes_count
-                      )
+                  language_data = api_get(
+                      repo["languages_url"]
+                  )
+
+                  for language, value in language_data.items():
+
+                      languages[language] += value
 
               except Exception:
+
                   pass
 
-          sorted_languages = sorted(
-              language_bytes.items(),
-              key=lambda item: item[1],
-              reverse=True
+          top_languages = languages.most_common(5)
+
+          if top_languages:
+
+              languages_text = " • ".join(
+                  language
+                  for language, value in top_languages
+              )
+
+          else:
+
+              languages_text = "JavaScript • HTML • CSS"
+
+          # --------------------------------
+          # CONTRIBUTIONS
+          # --------------------------------
+
+          end_date = datetime.datetime.utcnow()
+
+          start_date = (
+              end_date -
+              datetime.timedelta(days=365)
           )
 
-          top_languages = [
-              language
-              for language, value in sorted_languages[:5]
-          ]
+          query = """
 
-          if not top_languages:
-              top_languages = ["JavaScript", "HTML", "CSS"]
+          query($user: String!, $from: DateTime!, $to: DateTime!) {
 
-          languages_text = " • ".join(top_languages)
+            user(login: $user) {
 
-          # ---------------------------------
-          # CONTRIBUTIONS IN LAST 365 DAYS
-          # ---------------------------------
+              contributionsCollection(
+                from: $from
+                to: $to
+              ) {
 
-          end_date = datetime.utcnow()
-          start_date = end_date - timedelta(days=365)
+                contributionCalendar {
 
-          contributions = 0
+                  totalContributions
 
-          try:
-              query = """
-              query($user: String!, $from: DateTime!, $to: DateTime!) {
-                user(login: $user) {
-                  contributionsCollection(
-                    from: $from
-                    to: $to
-                  ) {
-                    contributionCalendar {
-                      totalContributions
+                  weeks {
+
+                    contributionDays {
+
+                      contributionCount
+
+                      date
+
                     }
+
                   }
+
                 }
+
               }
-              """
 
-              graphql_payload = json.dumps({
-                  "query": query,
-                  "variables": {
-                      "user": USERNAME,
-                      "from": start_date.isoformat() + "Z",
-                      "to": end_date.isoformat() + "Z"
-                  }
-              }).encode("utf-8")
+            }
 
-              request = urllib.request.Request(
-                  "https://api.github.com/graphql",
-                  data=graphql_payload,
-                  headers={
-                      **API_HEADERS,
-                      "Content-Type": "application/json"
-                  },
-                  method="POST"
+          }
+
+          """
+
+          payload = json.dumps({
+
+              "query": query,
+
+              "variables": {
+
+                  "user": USERNAME,
+
+                  "from": start_date.isoformat() + "Z",
+
+                  "to": end_date.isoformat() + "Z"
+
+              }
+
+          }).encode("utf-8")
+
+          request = urllib.request.Request(
+
+              "https://api.github.com/graphql",
+
+              data=payload,
+
+              headers={
+
+                  **HEADERS,
+
+                  "Content-Type":
+                  "application/json"
+
+              },
+
+              method="POST"
+
+          )
+
+          with urllib.request.urlopen(request) as response:
+
+              graphql_data = json.loads(
+                  response.read()
               )
 
-              with urllib.request.urlopen(request) as response:
-                  graphql_data = json.loads(response.read())
+          calendar = (
 
-              contributions = (
-                  graphql_data
-                  .get("data", {})
-                  .get("user", {})
-                  .get("contributionsCollection", {})
-                  .get("contributionCalendar", {})
-                  .get("totalContributions", 0)
-              )
+              graphql_data
+              .get("data", {})
+              .get("user", {})
+              .get("contributionsCollection", {})
+              .get("contributionCalendar", {})
+          )
 
-          except Exception:
-              contributions = 0
+          contributions = calendar.get(
+              "totalContributions",
+              0
+          )
 
-          # ---------------------------------
+          # --------------------------------
           # CURRENT STREAK
-          # ---------------------------------
+          # --------------------------------
 
-          current_streak = "N/A"
+          contribution_days = []
 
-          # ---------------------------------
-          # CREATE SVG
-          # ---------------------------------
+          for week in calendar.get("weeks", []):
 
-          now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+              for day in week.get(
+                  "contributionDays",
+                  []
+              ):
 
-          svg = f'''<svg
+                  if day["contributionCount"] > 0:
+
+                      contribution_days.append(
+                          day["date"]
+                      )
+
+          contribution_days.sort()
+
+          current_streak = 0
+
+          today = datetime.date.today()
+
+          date_cursor = today
+
+          while date_cursor.isoformat() in contribution_days:
+
+              current_streak += 1
+
+              date_cursor -= datetime.timedelta(
+                  days=1
+              )
+
+          # --------------------------------
+          # CREATE FOLDER
+          # --------------------------------
+
+          os.makedirs(
+              "stats",
+              exist_ok=True
+          )
+
+          # --------------------------------
+          # MAIN STATS CARD
+          # --------------------------------
+
+          current_time = datetime.datetime.utcnow().strftime(
+              "%Y-%m-%d %H:%M UTC"
+          )
+
+          stats_svg = f'''
+
+          <svg
             width="1000"
-            height="480"
-            viewBox="0 0 1000 480"
+            height="520"
+            viewBox="0 0 1000 520"
             xmlns="http://www.w3.org/2000/svg">
 
             <defs>
 
               <linearGradient
-                id="background"
+                id="bg"
                 x1="0%"
                 y1="0%"
                 x2="100%"
@@ -239,64 +323,37 @@ jobs:
               </linearGradient>
 
               <linearGradient
-                id="accent"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%">
+                id="accent">
 
                 <stop
                   offset="0%"
-                  stop-color="#38bdf8"/>
+                  stop-color="#22d3ee"/>
 
                 <stop
                   offset="100%"
-                  stop-color="#818cf8"/>
+                  stop-color="#6366f1"/>
 
               </linearGradient>
 
-              <filter
-                id="shadow">
-
-                <feDropShadow
-                  dx="0"
-                  dy="8"
-                  stdDeviation="12"
-                  flood-opacity="0.35"/>
-
-              </filter>
-
             </defs>
 
-            <!-- Main Card -->
+            <rect
+              width="1000"
+              height="520"
+              rx="30"
+              fill="url(#bg)"/>
 
             <rect
-              x="10"
-              y="10"
-              width="980"
-              height="460"
-              rx="28"
-              fill="url(#background)"
-              filter="url(#shadow)"/>
-
-            <!-- Top Accent -->
-
-            <rect
-              x="10"
-              y="10"
-              width="980"
+              width="1000"
               height="8"
-              rx="4"
               fill="url(#accent)"/>
-
-            <!-- Header -->
 
             <text
               x="60"
               y="75"
-              fill="#ffffff"
+              fill="white"
               font-size="36"
-              font-family="Arial, sans-serif"
+              font-family="Arial"
               font-weight="bold">
 
               Amzad Hussain
@@ -308,13 +365,11 @@ jobs:
               y="112"
               fill="#94a3b8"
               font-size="19"
-              font-family="Arial, sans-serif">
+              font-family="Arial">
 
               Full Stack Web Developer • MERN Stack Developer
 
             </text>
-
-            <!-- Divider -->
 
             <line
               x1="60"
@@ -324,14 +379,12 @@ jobs:
               stroke="#334155"
               stroke-width="2"/>
 
-            <!-- Stat 1 -->
-
             <text
               x="100"
-              y="205"
-              fill="#38bdf8"
-              font-size="38"
-              font-family="Arial, sans-serif"
+              y="210"
+              fill="#22d3ee"
+              font-size="40"
+              font-family="Arial"
               font-weight="bold">
 
               {public_repos}
@@ -340,23 +393,21 @@ jobs:
 
             <text
               x="100"
-              y="238"
+              y="245"
               fill="#cbd5e1"
               font-size="16"
-              font-family="Arial, sans-serif">
+              font-family="Arial">
 
               Public Repositories
 
             </text>
 
-            <!-- Stat 2 -->
-
             <text
               x="350"
-              y="205"
+              y="210"
               fill="#facc15"
-              font-size="38"
-              font-family="Arial, sans-serif"
+              font-size="40"
+              font-family="Arial"
               font-weight="bold">
 
               {total_stars}
@@ -365,23 +416,21 @@ jobs:
 
             <text
               x="350"
-              y="238"
+              y="245"
               fill="#cbd5e1"
               font-size="16"
-              font-family="Arial, sans-serif">
+              font-family="Arial">
 
               Total Stars
 
             </text>
 
-            <!-- Stat 3 -->
-
             <text
               x="600"
-              y="205"
+              y="210"
               fill="#a78bfa"
-              font-size="38"
-              font-family="Arial, sans-serif"
+              font-size="40"
+              font-family="Arial"
               font-weight="bold">
 
               {followers}
@@ -390,23 +439,21 @@ jobs:
 
             <text
               x="600"
-              y="238"
+              y="245"
               fill="#cbd5e1"
               font-size="16"
-              font-family="Arial, sans-serif">
+              font-family="Arial">
 
               Followers
 
             </text>
 
-            <!-- Stat 4 -->
-
             <text
               x="820"
-              y="205"
+              y="210"
               fill="#34d399"
-              font-size="38"
-              font-family="Arial, sans-serif"
+              font-size="40"
+              font-family="Arial"
               font-weight="bold">
 
               {total_forks}
@@ -415,31 +462,29 @@ jobs:
 
             <text
               x="820"
-              y="238"
+              y="245"
               fill="#cbd5e1"
               font-size="16"
-              font-family="Arial, sans-serif">
+              font-family="Arial">
 
               Total Forks
 
             </text>
 
-            <!-- Contributions -->
-
             <rect
               x="60"
-              y="275"
+              y="290"
               width="880"
-              height="75"
-              rx="16"
+              height="80"
+              rx="18"
               fill="#111827"/>
 
             <text
               x="90"
-              y="320"
+              y="340"
               fill="#f97316"
-              font-size="28"
-              font-family="Arial, sans-serif"
+              font-size="32"
+              font-family="Arial"
               font-weight="bold">
 
               {contributions}
@@ -447,24 +492,22 @@ jobs:
             </text>
 
             <text
-              x="230"
-              y="320"
+              x="270"
+              y="340"
               fill="#cbd5e1"
               font-size="18"
-              font-family="Arial, sans-serif">
+              font-family="Arial">
 
               Contributions in the last year
 
             </text>
 
-            <!-- Languages -->
-
             <text
               x="60"
-              y="395"
-              fill="#ffffff"
-              font-size="19"
-              font-family="Arial, sans-serif"
+              y="425"
+              fill="white"
+              font-size="20"
+              font-family="Arial"
               font-weight="bold">
 
               💻 Most Used Languages
@@ -473,53 +516,238 @@ jobs:
 
             <text
               x="60"
-              y="430"
-              fill="#38bdf8"
-              font-size="17"
-              font-family="Arial, sans-serif">
+              y="465"
+              fill="#22d3ee"
+              font-size="18"
+              font-family="Arial">
 
               {languages_text}
 
             </text>
 
-            <!-- Updated -->
-
             <text
               x="700"
-              y="445"
+              y="490"
               fill="#64748b"
               font-size="12"
-              font-family="Arial, sans-serif">
+              font-family="Arial">
 
-              Updated: {now}
+              Updated: {current_time}
 
             </text>
 
-          </svg>'''
+          </svg>
 
-          os.makedirs("stats", exist_ok=True)
+          '''
 
           with open(
+
               "stats/github-stats.svg",
+
               "w",
+
               encoding="utf-8"
+
           ) as file:
 
-              file.write(svg)
+              file.write(stats_svg)
+
+          # --------------------------------
+          # CONTRIBUTION GRAPH
+          # --------------------------------
+
+          weeks = calendar.get(
+              "weeks",
+              []
+          )
+
+          graph_width = 1000
+
+          graph_height = 220
+
+          cell_size = 12
+
+          gap = 4
+
+          graph = f'''
+
+          <svg
+            width="{graph_width}"
+            height="{graph_height}"
+            xmlns="http://www.w3.org/2000/svg">
+
+            <rect
+              width="100%"
+              height="100%"
+              rx="20"
+              fill="#0f172a"/>
+
+            <text
+              x="30"
+              y="35"
+              fill="white"
+              font-size="22"
+              font-family="Arial"
+              font-weight="bold">
+
+              📈 Contribution Activity
+
+            </text>
+
+          '''
+
+          for week_index, week in enumerate(weeks):
+
+              for day_index, day in enumerate(
+                  week.get(
+                      "contributionDays",
+                      []
+                  )
+              ):
+
+                  count = day[
+                      "contributionCount"
+                  ]
+
+                  x = 30 + (
+                      week_index *
+                      (cell_size + gap)
+                  )
+
+                  y = 60 + (
+                      day_index *
+                      (cell_size + gap)
+                  )
+
+                  if count == 0:
+
+                      fill = "#1e293b"
+
+                  elif count < 3:
+
+                      fill = "#164e63"
+
+                  elif count < 6:
+
+                      fill = "#0891b2"
+
+                  elif count < 10:
+
+                      fill = "#06b6d4"
+
+                  else:
+
+                      fill = "#67e8f9"
+
+                  graph += f'''
+
+                  <rect
+                    x="{x}"
+                    y="{y}"
+                    width="{cell_size}"
+                    height="{cell_size}"
+                    rx="3"
+                    fill="{fill}"/>
+
+                  '''
+
+          graph += '''
+
+          </svg>
+
+          '''
+
+          with open(
+
+              "stats/contributions.svg",
+
+              "w",
+
+              encoding="utf-8"
+
+          ) as file:
+
+              file.write(graph)
+
+          # --------------------------------
+          # LANGUAGE CARD
+          # --------------------------------
+
+          language_svg = f'''
+
+          <svg
+            width="1000"
+            height="240"
+            xmlns="http://www.w3.org/2000/svg">
+
+            <rect
+              width="100%"
+              height="100%"
+              rx="20"
+              fill="#0f172a"/>
+
+            <text
+              x="40"
+              y="55"
+              fill="white"
+              font-size="25"
+              font-family="Arial"
+              font-weight="bold">
+
+              💻 My Most Used Programming Languages
+
+            </text>
+
+            <text
+              x="40"
+              y="110"
+              fill="#22d3ee"
+              font-size="22"
+              font-family="Arial">
+
+              {languages_text}
+
+            </text>
+
+            <text
+              x="40"
+              y="165"
+              fill="#94a3b8"
+              font-size="17"
+              font-family="Arial">
+
+              Building modern applications with clean and efficient code.
+
+            </text>
+
+          </svg>
+
+          '''
+
+          with open(
+
+              "stats/languages.svg",
+
+              "w",
+
+              encoding="utf-8"
+
+          ) as file:
+
+              file.write(language_svg)
 
           PY
 
-      - name: Commit generated stats
+      - name: Commit and Push Stats
+
         run: |
 
           git config user.name "github-actions[bot]"
 
-          git config user.email \
-          "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add stats/github-stats.svg
+          git add stats/
 
-          git diff --cached --quiet || \
-          git commit -m "Update GitHub stats"
+          git diff --cached --quiet || git commit -m "Update GitHub stats"
 
           git push
