@@ -1,5 +1,5 @@
 <div id="header" align="center">
-  <img src="https://media4.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="500" style="border-radius:10%;"/>
+  <img src="https://media4.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="300" style="border-radius:10%;"/>
 </div>
 
 <div id="badges" align="center">
@@ -44,7 +44,7 @@
 <div align="center">
   <img 
     src="https://miro.medium.com/max/1400/1*OxT7UjIwhklKE8d8SFyo7g.gif"
-    width="700"
+    width="500"
     alt="Coding Animation"
   />
 </div>
