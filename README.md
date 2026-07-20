@@ -1,12 +1,12 @@
 <div id="header" align="center">
-  <img src="https://media4.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="600" style="border-radius:10%;"/>
+  <img src="https://media4.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="500" style="border-radius:10%;"/>
 </div>
 
 <div id="badges" align="center">
-  <a href="https://www.linkedin.com/in/amzad-hussain-5b8ab4287/">
+  <a href="#">
     <img src="https://img.shields.io/badge/LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Badge"/>
   </a>
-  <a href="#">
+  <a href="https://amzad-hussain-portfolio-website.vercel.app/">
     <img src="https://img.shields.io/badge/Portfolio-563D7C?style=for-the-badge&logo=website&logoColor=white" alt="Portfolio Badge"/>
   </a>
   <a href="#">
@@ -19,30 +19,49 @@
 </div>
 
 <h1 align="center">
-  Hello <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="30px"/> I'm Amzad Hussain
+  <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="30px"/> Hello, I'm <strong>Amzad Hussain</strong>
 </h1>
 
-<h3 align="center">Full Stack Software Developer</h3>
+<h3 align="center">
+  🚀 Full Stack Web Developer | MERN Stack Enthusiast | Lifelong Learner
+</h3>
 
 <p align="center">
-  I'm a passionate Full Stack Web Developer skilled in the MERN Stack, always eager to learn and experiment with new technologies. I focus on writing clean, efficient, and maintainable code.
+  I transform ideas into functional, scalable, and user-friendly web applications.
+  <br />
+  Passionate about building with the <strong>MERN Stack</strong>, solving real-world problems,
+  <br />
+  and continuously exploring the ever-evolving world of technology.
 </p>
+
+<p align="center">
+  💻 Code • 🚀 Build • 🧠 Learn • 🤝 Collaborate • 🔥 Repeat
+</p>
+
 
 <hr />
 
 <div align="center">
-  <img src="https://camo.githubusercontent.com/410692453565c8609eea9618bfafcfd200288a6dab6d8a23b8205251173b525a/68747470733a2f2f6d69726f2e6d656469756d2e636f6d2f6d61782f313430302f312a4f785437556a4977686b6c4b453864385346796f37672e676966" width="600"/>
+  <img 
+    src="https://miro.medium.com/max/1400/1*OxT7UjIwhklKE8d8SFyo7g.gif"
+    width="700"
+    alt="Coding Animation"
+  />
 </div>
 
 ## 👨‍💻 About Me
 
-- 🌱 I’m currently learning _Full Stack Software Development_ at _Masai School_.
-- 🤝 I enjoy collaborating on projects and learning from other developers.
-- 💬 Ask me about anything related to software development.
-- 🏡 I'm based in Siwan, Bihar, India.
-- 🌐 Check out my [Portfolio](#) to know more about my work.
-- ❤️ I love coding and building projects that solve real-world problems.
-- ⚡ Fun fact: Still finding...
+Hello! I'm **Amzad Hussain**, a passionate **Full Stack Web Developer** who enjoys turning ideas into practical, user-friendly web applications.
+
+* 🚀 Currently building my skills in **Full Stack Web Development** and exploring modern technologies.
+* 💻 I enjoy creating clean, scalable, and efficient applications using the **MERN Stack**.
+* 🤝 I love collaborating with developers, sharing ideas, and learning something new from every project.
+* 🧠 Always curious about **JavaScript, React, Node.js, databases, APIs, and emerging technologies**.
+* 🏡 Based in **Siwan, Bihar, India**.
+* 🌐 Explore my work through my **[Portfolio](https://amzad-hussain-portfolio-website.vercel.app/)**.
+* ❤️ I enjoy coding, experimenting with new technologies, and building projects that solve real-world problems.
+* ⚡ **Fun fact:** Every project teaches me something new—and I'm always ready for the next challenge! 🚀
+
 
 ## 🛠 Technologies & Tools
 
