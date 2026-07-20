@@ -1,5 +1,5 @@
 <div id="header" align="center">
-  <img src="https://media4.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="300" style="border-radius:10%;"/>
+  <img src="https://media4.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="500" style="border-radius:10%;"/>
 </div>
 
 <div id="badges" align="center">
@@ -44,7 +44,7 @@
 <div align="center">
   <img 
     src="https://miro.medium.com/max/1400/1*OxT7UjIwhklKE8d8SFyo7g.gif"
-    width="500"
+    width="700"
     alt="Coding Animation"
   />
 </div>
@@ -94,23 +94,50 @@ Hello! I'm **Amzad Hussain**, a passionate **Full Stack Web Developer** who enjo
 ## 🌐 Languages
 
 <ul>
-  <li>English: Native proficiency</li>
-  <li>Hindi: Native proficiency</li>
-  <li>Urdu: Read and write</li>
-  <li>Bhojpuri: Native proficiency</li>
+  <li>English : Read, Write and Speak Native </li>
+  <li>Hindi : Read, Write and Speak Native </li>
+  <li>Urdu : Read and write </li>
+  <li>Bhojpuri : Read, Write and Speak Native </li>
 </ul>
 
-## 📊 GitHub Stats
+
+## 📊 GitHub Statistics
 
 <div align="center">
-  <img src="https://streak-stats.demolab.com?user=AmzadT&theme=dark&date_format=j%20M%5B%20Y%5D" alt="GitHub Streak"/>
+
+  <!-- GitHub Streak -->
+  <img
+    src="https://streak-stats.demolab.com?user=Amzad-Hussain-786&theme=dark&hide_border=true"
+    alt="Amzad Hussain's GitHub Streak"
+  />
+
   <br/><br/>
-  <img src="https://github-readme-stats.vercel.app/api?username=AmzadT&show_icons=true&theme=radical" width="400"/>
+
+  <!-- GitHub Stats -->
+  <img
+    src="https://github-readme-stats.vercel.app/api?username=Amzad-Hussain-786&show_icons=true&theme=radical&hide_border=true"
+    alt="Amzad Hussain's GitHub Stats"
+  />
+
   <br/><br/>
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=AmzadT&layout=compact&theme=vision-friendly-dark" width="400"/>
+
+  <!-- Top Languages -->
+  <img
+    src="https://github-readme-stats.vercel.app/api/top-langs/?username=Amzad-Hussain-786&layout=compact&theme=radical&hide_border=true"
+    alt="Most Used Languages"
+  />
+
   <br/><br/>
-  <img src="https://github-profile-trophy.vercel.app/?username=AmzadT&theme=radical" alt="GitHub Trophies"/>
+
+  <!-- GitHub Trophies -->
+  <img
+    src="https://github-profile-trophy.vercel.app/?username=Amzad-Hussain-786&theme=radical&no-frame=true&no-bg=true&margin-w=4"
+    alt="GitHub Trophies"
+  />
+
 </div>
+
+
 
 ## 🔥 Featured Projects
 
