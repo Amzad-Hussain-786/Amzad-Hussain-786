@@ -64,7 +64,7 @@
 
 👋Hello! I'm **Amzad Hussain**, a passionate **Full Stack Web Developer** who enjoys turning ideas into practical, user-friendly web applications.
 
-* 🚀 Currently building my skills in **Full Stack Web Development** and exploring modern technologies.
+* 🚀 Currently building my skills in **Full Stack Web Development** and exploring modern technologies...
 * 💻 I enjoy creating clean, scalable, and efficient applications using the **MERN Stack**.
 * 🤝 I love collaborating with developers, sharing ideas, and learning something new from every project.
 * 🧠 Always curious about **JavaScript, React, Node.js, databases, APIs, and emerging technologies**.
