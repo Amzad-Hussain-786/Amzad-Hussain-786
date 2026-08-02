@@ -190,7 +190,7 @@
 
 <div align="center">
   
-  ## 📊 GitHub Statistics
+  ## 📊 GitHub Stats
   
 </div>
 
@@ -213,12 +213,14 @@
   
 </div>
 
+<br/>
+
 <h2 align="center">📊 My GitHub Statistics</h2>
 
 <div align="center">
   <img
     src="https://raw.githubusercontent.com/Amzad-Hussain-786/Amzad-Hussain-786/main/stats/github-stats.svg"
-    width="80%"
+    width="80%."
     alt="Amzad Hussain GitHub Statistics"
   />
 </div>
