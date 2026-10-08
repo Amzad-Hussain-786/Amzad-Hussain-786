@@ -41,7 +41,7 @@
           width="12"
           height="12"
           rx="3"
-          fill="#1e293b"/>
+          fill="#164e63"/>
 
         
 
@@ -51,23 +51,13 @@
           width="12"
           height="12"
           rx="3"
-          fill="#164e63"/>
-
-        
-
-        <rect
-          x="30"
-          y="108"
-          width="12"
-          height="12"
-          rx="3"
           fill="#1e293b"/>
 
         
 
         <rect
           x="30"
-          y="124"
+          y="108"
           width="12"
           height="12"
           rx="3"
@@ -3678,6 +3668,16 @@
         <rect
           x="862"
           y="108"
+          width="12"
+          height="12"
+          rx="3"
+          fill="#1e293b"/>
+
+        
+
+        <rect
+          x="862"
+          y="124"
           width="12"
           height="12"
           rx="3"
